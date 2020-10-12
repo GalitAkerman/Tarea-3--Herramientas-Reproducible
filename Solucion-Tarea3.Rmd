@@ -1,0 +1,100 @@
+---
+title: "Solución Tarea3"
+author: "Galit Akerman-Sanchez"
+date: "11/2020"
+output: html_document
+---
+
+### Paso previo: Instalación y uso de paquete packrat
+```{r, eval=FALSE}
+install.packages("packrat")
+getwd()
+packrat::init()
+```
+#El objetivo de usar el paquete "packrat" es para hacer del proyecto por pequeño que sea aislado, portable y reproducible.
+
+# Ejercicio 1: Cargar función "replicar_reg_scal()"
+```{r}
+source("./scripts/replicar_reg_scal.R") #Una vez se corre esta función se carga a nuestro ambiente de trabajo
+```
+#La función "replicar_reg_scal()" se utiliza para simular datos con múltiples variables respuestas, que posteriomente pueden ser analizados con una regresión escalonada. 
+
+```{r, include=FALSE}
+packrat::snapshot()
+```
+
+# Ejercicio 2: Cálculo de proporción de falsos positivos
+#### Se realiza este cálculo con la función para diferentes número de variables
+
+```{r, eval=TRUE}
+itr<-100
+falsos_positivos10 <- replicar_reg_scal(itr = itr, n = 30, nvars = 10, alfa = 0.05) # 10 variables por iteración
+falsos_positivos20 <- replicar_reg_scal(itr = itr, n = 30, nvars = 20, alfa = 0.05) # 20 variables por iteración
+falsos_positivos50 <- replicar_reg_scal(itr = itr, n = 30, nvars = 50, alfa = 0.05) # 50 variables por iteración
+falsos_positivos100 <- replicar_reg_scal(itr = itr, n = 30, nvars = 100, alfa =0.05) # 100 variables por iteración
+v_0.05<- c(falsos_positivos10, falsos_positivos20, falsos_positivos50, falsos_positivos100)
+v_0.05
+```
+#Utilizando un número de 100 iteraciones, podemos ver que a medido que aumenta el número de variables, aumenta la proporción de falsos negativos.
+
+# Ejercicio 3: Relación entre número de variables y proporción de falsos negativos
+#### Para confirmar como es (visualmente) esta relación, realizamos el siguiente gráfico: 
+
+```{r, fig.align = 'center'}
+fp <- NULL #Vector vacío
+
+nvar_seq <- seq(5, 100, by = 5)
+for(i in nvar_seq){
+  fpi <- replicar_reg_scal(itr= itr, n= 30, nvars= i, alfa=0.05)
+  fp <- append(fp, fpi)
+  } #Loop variando el valor del número de variables, con 100 iteraciones
+
+plot(nvar_seq, fp, type = 'l', ylab = "Proporción de falsos positivos", xlab = "Número de Variables", main = "Alfa 0.05", col= "dark blue")
+```
+#Se evidencia una tendencia que a medida que aumenta el número de variables aumenta la proporción de falsos positivos.
+
+# Ejercicio 4: Ahora variando el valor de alfa 
+#### Se realiza l cálculo de la proporción de falsos positivos con alfa = 0.02.
+
+```{r, eval=TRUE}
+itr<-100
+falsos_positivos2_10 <- replicar_reg_scal(itr = itr, n = 30, nvars = 10, alfa = 0.02) # 10 variables por iteración
+falsos_positivos2_20 <- replicar_reg_scal(itr = itr, n = 30, nvars = 20, alfa = 0.02) # 20 variables por iteración
+falsos_positivos2_50 <- replicar_reg_scal(itr = itr, n = 30, nvars = 50, alfa = 0.02) # 50 variables por iteración
+falsos_positivos2_100 <- replicar_reg_scal(itr = itr, n = 30, nvars = 100, alfa =0.02) # 100 variables por iteración
+v_0.02<- c(falsos_positivos2_10, falsos_positivos2_20, falsos_positivos2_50, falsos_positivos2_100)
+v_0.02
+```
+#Utilizando el mismo número de iteraciones pero ahora un valor de alfa de 0.02, vemos que la proporción de falsos negativos es menor y así la diferencia cuando aumentamos el número de variables.
+
+&nbsp;
+
+#### Se realiza el gráfico de la relación entre número de variables y la proporción de falsos positivos ahora con un alfa de 0.02
+```{r, fig.align = 'center'}
+fp <- NULL #Vector vacío
+
+nvar_seq <- seq(5, 100, by = 5)
+for(i in nvar_seq){
+  fpi <- replicar_reg_scal(itr= itr, n= 30, nvars= i, alfa=0.02)
+  fp <- append(fp, fpi)
+  } #Loop variando el valor del número de variables, con 100 iteraciones
+
+plot(nvar_seq, fp, type = 'l', ylab = "Proporción de falsos positivos", xlab = "Número de Variables", main = "Alfa 0.02", col= "dark green")
+```
+#Cuando el valor de alfa es menor que 0.05 (0.02), se puede evidenciar una relación poco lineal entre las dos variables.
+
+&nbsp;
+
+---
+# Ejercicio 5: Información de la sesión
+#### A continuación se presenta la información de la sesión
+```{r, echo= FALSE}
+sessionInfo()
+```
+
+
+# Mi organismo favorito
+
+<center> ![Babosa de mar](Babosa.jpeg) </center>
+<center> *Chromodoris lochi* </center>
+&nbsp;
